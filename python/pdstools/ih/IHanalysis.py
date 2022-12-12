@@ -543,22 +543,13 @@ def last_group_id(df, time_window='90d', time_column='pxOutcomeTime',
     None.
 
     """
-    df = df.collect()
-    for group in df.groupby_dynamic(time_column, every=time_window, period=time_window,
-                    by=grouping):
-        foo = 1
-        breakpoint()
-    foo = df.groupby_dynamic(time_column, every=time_window, period=time_window,
-                    by=grouping).groups()
-    breakpoint()
 
     df = (
         df.sort(time_column).
         groupby_dynamic(time_column, every=time_window, period=time_window,
-                        by=grouping).agg(pl.all().tail(1))
+                        by=grouping).agg(pl.all().exclude(time_column).tail(1))
         )
     last_group_id = df.collect()
-    breakpoint()
     return(last_group_id)
 
 
@@ -598,11 +589,10 @@ def last_outcome_time(df, time_window='90d', time_column='pxOutcomeTime',
     df = (
         df.sort(time_column).
         groupby_dynamic(time_column, every=time_window, period=time_window,
-                        by=grouping).agg(pl.all().tail(1))
+                        by=grouping).agg(pl.all().exclude(time_column).tail(1))
         )
     #.agg(pl.col(group_column).tail(1))
     last_outcome_time = df.collect()
-    breakpoint()
     return(last_outcome_time)
 
 
